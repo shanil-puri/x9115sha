@@ -1,5 +1,5 @@
 #Repository Tree:
-![Alt text](/repo-tree.png?raw=true)
+(/repo-tree.png?raw=true)
 
 #Python Version:
 ### Output for "python --version"
@@ -18,3 +18,6 @@
 
 #Running OkOk.py:
 ![Alt text](/okok-py.png?raw=true)
+
+#Contributor:
+Shanil Puri (spuri3)
