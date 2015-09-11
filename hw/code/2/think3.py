@@ -7,12 +7,14 @@ def print_lyrics():
     print "I sleep all night and I work all day."
 
 repeat_lyrics()
+print "\n###########################\n\n"
 
 # Excercise 3.3
 def right_justify(s):
     print " " * (70 - len(s)) + s
     
 right_justify("allen")
+print "\n###########################\n\n"
 
 #Excercise 3.4.1
 def do_twice(f):
@@ -23,6 +25,7 @@ def print_spam():
     print "spam"
     
 do_twice(print_spam)
+print "\n###########################\n\n"
 
 #Excercise 3.4.2
 def do_twice(f, v):
@@ -33,6 +36,7 @@ def print_spam(s):
     print s
     
 do_twice(print_spam, "rand")
+print "\n###########################\n\n"
 
 #Excercise 3.4.3
 def do_twice(f, v):
@@ -44,6 +48,7 @@ def print_twice(s):
     print s
     
 do_twice(print_twice, "rand")
+print "\n###########################\n\n"
 
 #Excercise 3.4.4
 def do_twice(f, v):
@@ -55,6 +60,7 @@ def print_twice(s):
     print s
     
 do_twice(print_twice, "spam")
+print "\n###########################\n\n"
 
 #Excercise 3.4.5
 def do_twice(f, v):
@@ -70,6 +76,7 @@ def do_four(f, v):
     do_twice(f, v)
     
 do_four(print_twice, "3.4.5")
+print "\n###########################\n\n"
 
 # #Excercise 3.5.1
 def draw_grid():
@@ -79,6 +86,7 @@ def draw_grid():
         else:
             print "|", ("  "*4 + "|")*2
 draw_grid()
+print "\n###########################\n\n"
 
 #Excercise 3.5.2
 def draw_row(num_cols):
@@ -94,4 +102,4 @@ def draw_grid(num_rows, num_cols):
     print "+", (" _"*4 + "+")*num_cols
 
 draw_grid(4, 4)
-
+print "\n###########################\n\n"
