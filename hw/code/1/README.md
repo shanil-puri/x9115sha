@@ -1,5 +1,5 @@
 #Repository Tree:
-(/repo-tree.png?raw=true)
+<img src="repo-tree.png" width=500>
 
 #Python Version:
 ### Output for "python --version"
