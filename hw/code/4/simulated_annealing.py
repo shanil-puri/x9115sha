@@ -52,7 +52,7 @@ class simAnneal():
     #simulated annealing starts    
     def simulatedAnnealing(self):
         print "Schaffer\n"
-        kmax = 1000.0
+        kmax = 10000.0
         random_x = self.model.random_valid_val()
         s = self.model.sum(random_x)
         e = self.model.normalize(s)
@@ -66,33 +66,30 @@ class simAnneal():
             sn = random.random()
             en = self.model.normalize(sn)
  
-            if (en > 1 or en < 0):
-                # print "continue"
-                continue
-
-            if (k % 50 == 0):
-                print ""
-                print eb,
-
             if en < eb:
                 sb = sn
                 eb = en
-                print "!",
-
-            if en < e:
+                out.append("!")
+            
+            elif en < e:
                 s = sn
                 e = en
-                print "+",
-
-            elif self.prob(e, en, float(k) / kmax) < random.random():
+                out.append("+")
+            
+            elif self.prob(e,en, (k/kmax)*5) < random.random():
                 s = sn
                 e = en
-                print "?",
-
+                out.append("?")
+            
             else:
-                print ".",
-
-            k = k + 1
+                out.append(".")
+            
+            if k%50 == 0:
+               print int(k), " - ",
+               print "".join(out)
+               out = [ ]
+            
+            k = k+1 
 
                 
         print "\nKmax = ", kmax
