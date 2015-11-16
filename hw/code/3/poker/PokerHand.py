@@ -186,9 +186,7 @@ def print_probabilities(hands):
     for val in hands:
         total += hands[val]
 
-    print '**********************************************'
-    print 'Poker Hand Probabilities'
-    print '**********************************************'
+    print 'Poker Probabilities'
 
     for val in hands:
         hands[val] = (hands[val] / float(total)) * 100
