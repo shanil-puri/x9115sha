@@ -177,15 +177,20 @@ def single_run(hands={}):
         hands[classification] = hands.get(classification, 0) + 1
 
     return hands
+    
 
-
-def print_probabilities(hands):
-
+if __name__ == '__main__':
+    # make a deck
+    deck = Deck()
+    deck.shuffle()
     total = 0
+    # deal the cards and classify the hands
+    for i in range(2000):
+        hands = single_run()
 
     for val in hands:
         total += hands[val]
-
+        
     print 'Poker Probabilities'
 
     for val in hands:
@@ -193,14 +198,3 @@ def print_probabilities(hands):
 
     for key in sorted(hands, key=hands.get, reverse=False):
         print '%s: %.2f %%' % (key, hands[key])
-
-if __name__ == '__main__':
-    # make a deck
-    deck = Deck()
-    deck.shuffle()
-
-    # deal the cards and classify the hands
-    for i in range(2000):
-        hands = single_run()
-
-    print_probabilities(hands)
