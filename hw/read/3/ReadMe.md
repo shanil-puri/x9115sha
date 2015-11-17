@@ -35,6 +35,3 @@
 2. The results also fail to display consistancy, or performance for different sets. Limited experiments also prevent the user from garnering a more thorough understanding of whether this method is comprehensive and encompasses all possible use cases and if so provides a better throughput than other methods more often than not.
 
 3. As mentioned in the above point, the paper fails to mention or display the preformance metrics in comparison to baseline metrics, as such thus the paper also fails to mention any limitations that this method may have that may be solved in future work.
-
-3.
-
