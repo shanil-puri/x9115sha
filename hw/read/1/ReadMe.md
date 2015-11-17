@@ -18,7 +18,7 @@ ASE '11 Proceedings of the 2011 26th IEEE/ACM International Conference on Automa
 
 ## iii. Artifacts
 
-1. **Aim:** The major aim of the paper is to explore how product line verification techniques can be used to automatically detect feature interaction. It aims to tackle two main challenges in feature interaction detection, namely:
+1. **Motivation:** The major aim of the paper is to explore how product line verification techniques can be used to automatically detect feature interaction. It aims to tackle two main challenges in feature interaction detection, namely:
 	1. "The detection of feature interaction based on specifications that do not have global feature system knowledge" (Related Work 3.1). This essentially means that for feature interaction detection the particular specification should not need to be aware of all the features of the system as Modularity is a desirable trait in product development.
 	2. Detect Feature Interaction without the need for generating and checking all individual products. Generating all possible combinations of features in a real time product may lead to the generation of large number of combinations, essentially rendering this approach non-feasible.
 
