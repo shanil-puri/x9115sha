@@ -16,8 +16,7 @@
 
 1. **Motivation:** While there are various tools that support superimposition for code artifacts and non-code artifacts, they appear all different, are dedicated to and embedded differently in their respective host languages, and their implementation and integration requires a major effort. The authors of this paper propose a method to automate the above procedures called FEATUREHOUSE. Using the FEATUREHOUSE technique proposed by the authors new language integration would only take a few short hours of investment as compared to setting up manually. They have proposed the use of attribute grammar to achieve automation of integraton of additional languages.
 
-2. **Visualization:** 
-
+2. **Visualization:**
 ![visualization](./img/img.png)
 The above figure has been used by the author to demonstrate the steps undertaken for the construction of the novel toolset the authors have named: FEATUREHOUSE-FSTGENERATOR
 
