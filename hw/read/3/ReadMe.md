@@ -1,5 +1,5 @@
 # Paper Summary
-## i. 
+## i. Lauenroth, Kim, Klaus Pohl, and Simon Toehning. "Model checking of domain artifacts in product line engineering." Automated Software Engineering, 2009. ASE'09. 24th IEEE/ACM International Conference on. IEEE, 2009.
 
 ## ii. Keywords
 
