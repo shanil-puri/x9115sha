@@ -1,0 +1,514 @@
+/* 
+    TODO: LIST
+        1. Implement the function read data from the data files and load them into the dataDb Map.
+        2. Correct the implementation for dimBinPoints. This is needs to be a map of map with bin_id and data points on a per dimension basis. IMPLEMENTED INCORRECTLY RIGHT NOW
+        3. Implement generate histogram.
+        4. Test functionality.
+*/
+#ifndef DATASTORE_HPP
+#define DATASTORE_HPP
+
+#include "iostream"
+#include "Python.h"
+#include "string"
+#include "vector"
+#include "unordered_map"
+#include "map"
+#include <unordered_map>
+#include <sys/types.h>
+#include "utilities.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <dirent.h>
+#include <errno.h>
+#include "fstream"
+#include <sstream>
+#include "limits"
+#include <ctime>
+#include <cmath>
+#include "algorithm"
+#include "set"
+//#include "ython.h"
+#include <ctime>
+#include <sys/time.h>
+#include <iterator>
+
+// #include <sys/time.h>
+using namespace std;
+
+#define DEBUG           0
+#define TOTAL_BINS      16
+#define TOP_K_BINS      4
+#define DIMENSIONALITY  4
+#define PCA_MIN_DIM     1
+#define BIN_RANGE       "lower"
+#define BIN_HIST        "histogram"
+
+
+class dataDb
+{
+public:
+    size_t store_id;
+    
+    cv::Mat dimBinPoints;
+
+    cv::Mat data;
+
+    cv::Mat centroids;
+
+    cv::Mat labels;
+
+    cv::PCA pca;
+
+    int has_pca;
+
+    double compactness;
+
+    // These are histograms on a per-dimension per-bin basis. These will be used in T-Test calculations.
+    std::map<size_t, std::map<size_t, float> > histograms;
+
+    // Rank the other data-stores in relation to this data-store. 
+    // Doing this we will need to calculate only the best match data stoe for current database and then calculate variance for top three relative highest scoring data sets.
+    // The chances are that the other data-sets will rank in similar order to current data-store if this is the best data store for us.
+    // STORE ORDER -> Increasing. Remember to traverse in reverse order.
+    std::map<float, std::pair<size_t, float>, std::greater<float> > relativeRank;
+
+    //############################################################ FUNCTION PROTOTYPES ############################################################
+    static cv::Mat prepare_pca_data(cv::Mat data, std::map<size_t, std::map<size_t, float > > &histograms, std::map<size_t, std::vector<size_t> > rowIndex);
+    static cv::Mat reduce_data_points(cv::Mat data, std::map<size_t, std::map<size_t, float > > histograms, std::map<size_t, std::vector<size_t> > rowIndex);
+    static cv::PCA PCA_dim_reduction(cv::Mat data);
+    static int getFilesInDirectory(std::vector<string> * files, const string dir);
+    static int readDataStore(string filePath, dataDb *store);
+    static cv::Mat prepare_pca_data(cv::Mat data, std::map<size_t, std::map<size_t, float > > &histograms);
+    static void project_pca_data(dataDb *, dataDb *);
+    static void rank_data_set(dataDb *, dataDb *);
+    static cv::Mat compute_centroid(cv::Mat data, cv::Mat *, double *, int);
+    static size_t rank_runt_time_data_set(dataDb *);
+    //############################################################ FUNCTION PROTOTYPES ############################################################ 
+};
+
+
+std::map<size_t, std::vector<float> > rangeMap;
+std::vector<dataDb *> dataStore;
+std::unordered_map<size_t, dataDb *> dataStoreHash;
+
+int start_time_computation = 0;
+long reduce_data_points_time = 0;
+long prepare_pca_data_time = 0;
+long rank_data_set_pca_time = 0;
+long rank_data_set_t_test_time = 0;
+long rank_runt_time_data_set_time = 0;
+
+cv::Mat dataDb::reduce_data_points(cv::Mat data, std::map<size_t, std::map<size_t, float > > histograms, std::map<size_t, std::vector<size_t> > rowIndex)
+{
+    //###################### BENCHMARKING CODE ##############################
+    long elapsed_seconds;
+    long elapsed_useconds;
+    long elapsed_utime;
+
+    struct timeval tempo, tempo1;
+    gettimeofday(&tempo, NULL);
+    //###################### BENCHMARKING CODE ##############################
+    cv::Mat binPoints;
+    // Input row only once even though the dimentions may lie in top ranking bins in multiple dimensions.
+    std::unordered_map<size_t, int> rowUsed;
+
+    for (std::map<size_t, std::map<size_t, float> >::const_iterator iter = histograms.begin(); iter != histograms.end(); ++iter)
+    {
+        std::multimap<float, size_t> dst = flip_map(iter->second);
+        int i = 0;
+        
+        for (std::multimap<float, size_t>::reverse_iterator it = dst.rbegin(); i < TOP_K_BINS && it != dst.rend(); ++it, ++i)
+        {
+            for(std::vector<size_t>::const_iterator rIt = rowIndex[it->second].begin(); rIt != rowIndex[it->second].end(); ++rIt)
+            {
+                if(rowUsed.find(*rIt) == rowUsed.end()){
+                    binPoints.push_back(data.row(*rIt));
+                    rowUsed[*rIt] = 1;
+                }
+            }
+        }
+    }
+
+    //###################### BENCHMARKING CODE ##############################
+    gettimeofday(&tempo1, NULL);
+
+    elapsed_seconds = tempo1.tv_sec - tempo.tv_sec;
+    elapsed_useconds = tempo1.tv_usec - tempo.tv_usec;
+    elapsed_utime = (elapsed_seconds) * 1000000 + elapsed_useconds;
+    if(start_time_computation)
+    {
+        reduce_data_points_time += elapsed_utime;
+    }
+    //###################### BENCHMARKING CODE ##############################
+
+    return binPoints;
+}
+
+cv::PCA dataDb::PCA_dim_reduction(cv::Mat data)
+{
+    cv::PCA pca(data, cv::Mat(), CV_PCA_DATA_AS_ROW, DIMENSIONALITY);
+    return pca;
+}
+
+int dataDb::getFilesInDirectory(std::vector<string> * files, const string dir)
+{
+    DIR *dp;
+    struct dirent *dirp;
+    if((dp  = opendir(dir.c_str())) == NULL) {
+        cout << "Error(" << errno << ") opening " << dir << endl;
+        // return errno;
+    }
+
+    while ((dirp = readdir(dp)) != NULL) {
+        if(dirp->d_name[0] != '.')
+            files->push_back(string(dirp->d_name));
+    }
+    closedir(dp);
+    return 0;
+}
+
+// Once files have been read simply store into a map.
+int dataDb::readDataStore(string filePath, dataDb *store)
+{
+    static size_t ctr = 0;
+    ifstream file;
+
+    file.open(filePath);
+    if(!file){
+        return -1;
+    }
+    
+    std::vector<std::vector<float> > tmpVec;
+    std::string numStream;
+    
+    cv::Mat tmpMat;
+
+    while(std::getline(file, numStream))
+    {
+        // Read the file line wise and generate a 2D cv::Mat. This will be used in PCA computation.
+        std::istringstream buffer(numStream);
+        std::vector<float> line((std::istream_iterator<float>(buffer)),
+                             std::istream_iterator<float>());
+        cv::Mat m = cv::Mat(line).t();
+        tmpMat.push_back(m);
+        
+        // Calculate the range on a per-dimension basis while reading from the file.
+        // This will be much faster re-reading the whole input and then calculating the range.
+        int dim = 0;
+        for (std::vector<float>::const_iterator iter = line.begin(); iter != line.end(); ++iter)
+        {
+            if(ctr == 0){
+                rangeMap[dim].push_back(*iter);
+                rangeMap[dim++].push_back(*iter);
+                // cout << *iter;
+            }
+            else{
+                rangeMap[dim][0] = (*iter < rangeMap[dim][0]) ? *iter : rangeMap[dim][0];
+                rangeMap[dim][1] = (*iter > rangeMap[dim][1]) ? *iter : rangeMap[dim][1];
+                dim++;
+            }
+        }
+    }
+
+    // cout << endl << endl << endl << endl << ctr <<endl<< tmpMat << endl << endl << endl;
+    store->store_id = ctr++;
+    store->data = tmpMat;
+    return 0;
+}
+
+
+cv::Mat dataDb::prepare_pca_data(cv::Mat data, std::map<size_t, std::map<size_t, float > > &histograms)
+{
+    //###################### BENCHMARKING CODE ##############################
+    long elapsed_seconds;
+    long elapsed_useconds;
+    long elapsed_utime;
+
+    struct timeval tempo, tempo1;
+    gettimeofday(&tempo, NULL);
+    //###################### BENCHMARKING CODE ##############################
+    std::map<size_t, std::vector<size_t> > rowIndex;
+    float range, binRange, lower_lim, upper_lim;
+    for (int i = 0; i < data.cols; ++i)
+    {
+        range = rangeMap[i][1] - rangeMap[i][0];
+        binRange = range / TOTAL_BINS;
+        
+        for (int j = 0; j < data.rows; ++j)
+        {
+            for (size_t k = 0; k < TOTAL_BINS; ++k)
+            {
+                lower_lim = ((float)k * binRange + rangeMap[i][0]);
+                upper_lim = ((float)(k+1) * binRange + rangeMap[i][0]);
+
+                if( lower_lim < data.at<float>(j,i) && upper_lim > data.at<float>(j,i) )
+                {
+                    rowIndex[k].push_back(j);
+                    // Histogram for per-bin on a per-dimension basis.
+                    if((histograms.find(i) != histograms.end()) && (histograms[i].find(k) != histograms[i].end())){
+                        histograms[i][k]++;
+                    }
+                    else{
+                        histograms[i][k] = 1;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    //###################### BENCHMARKING CODE ##############################
+    gettimeofday(&tempo1, NULL);
+
+    elapsed_seconds = tempo1.tv_sec - tempo.tv_sec;
+    elapsed_useconds = tempo1.tv_usec - tempo.tv_usec;
+    elapsed_utime = (elapsed_seconds) * 1000000 + elapsed_useconds;
+    if(start_time_computation)
+    {
+        prepare_pca_data_time += elapsed_utime;
+    }
+    //###################### BENCHMARKING CODE ##############################
+    // cout << "called oasbdcljads\n\n" << reduce_data_points(data, histograms, rowIndex);
+    return reduce_data_points(data, histograms, rowIndex);
+}
+
+
+/* 
+    1. Project child and parent data on parent PCA. -> Call project_pca_data
+    2. Run T-test on reduced data sets. -> call SciPy T-Test library to implement this procedure.
+    3. Used the variance to rank the child data-set wrt to the parent data-set.
+    */
+void dataDb::rank_data_set(dataDb *parent, dataDb *child)
+{
+    Py_Initialize();
+    
+    PyObject *pName, *pModule, *pFunc, *pArgs, *parentList, *childList, *tmpParVal, *tmpChildVal, *pTuple;
+
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("sys.path.append(\"../src\")");
+    pName = PyString_FromString("tTestScript");
+    pModule = PyImport_Import(pName);
+    // Py_DECREF(pName);
+
+     //###################### BENCHMARKING CODE ##############################
+    long elapsed_seconds;
+    long elapsed_useconds;
+    long elapsed_utime;
+
+    struct timeval tempo, tempo1;
+    gettimeofday(&tempo, NULL);
+    
+    //###################### BENCHMARKING CODE ##############################
+    int rowSize = parent->data.rows;
+
+    cv::Mat parentProjData = parent->pca.project(parent->data);
+    cv::Mat childProjData = parent->pca.project(child->data.rowRange(0, rowSize));
+
+    //###################### BENCHMARKING CODE ##############################
+    gettimeofday(&tempo1, NULL);
+
+    elapsed_seconds = tempo1.tv_sec - tempo.tv_sec;
+    elapsed_useconds = tempo1.tv_usec - tempo.tv_usec;
+    elapsed_utime = (elapsed_seconds) * 1000000 + elapsed_useconds;
+    if(start_time_computation)
+    {
+        rank_data_set_pca_time += elapsed_utime;
+    }
+    //###################### BENCHMARKING CODE ##############################
+
+     //###################### BENCHMARKING CODE ##############################
+    long elapsed_seconds1;
+    long elapsed_useconds1;
+    long elapsed_utime1;
+
+    struct timeval tempo2, tempo3;
+    gettimeofday(&tempo2, NULL);
+    
+    //###################### BENCHMARKING CODE ##############################
+    float p_val_score = 0;
+    float t_statistic_score = 0;
+    
+    for (int i = 0; i < parentProjData.cols; ++i)
+    {
+        cv::Mat parentColumn = parentProjData.col(i);
+        cv::Mat childColumn = childProjData.col(i);
+        parentList = PyList_New(parentColumn.rows);
+        childList = PyList_New(parentColumn.rows);
+        for (int i = 0; i < parentColumn.rows; ++i)
+        {
+            tmpParVal   = PyFloat_FromDouble(parentColumn.at<float>(i));
+            tmpChildVal = PyFloat_FromDouble(childColumn.at<float>(i));
+            PyList_SET_ITEM(parentList, i, tmpParVal);
+            PyList_SET_ITEM(childList, i, tmpChildVal);
+        }
+        pArgs = PyTuple_New(2);
+        PyTuple_SetItem(pArgs, 0, parentList);
+        PyTuple_SetItem(pArgs, 1, childList);
+        
+        // Py_DECREF(parentList);
+        // Py_DECREF(childList);
+        // Py_DECREF(tmpParVal);
+        // Py_DECREF(tmpChildVal);
+
+        if (pModule != NULL) 
+        {
+            pFunc = PyObject_GetAttrString(pModule, "t_test_PCA_Val");
+            if(pFunc != NULL)
+            {
+                pTuple = PyObject_CallObject(pFunc, pArgs);
+                t_statistic_score += PyFloat_AsDouble(PyTuple_GetItem(pTuple, 0));
+                p_val_score += PyFloat_AsDouble(PyTuple_GetItem(pTuple, 1));
+                // Py_DECREF(pTuple);
+            }
+        }
+        else
+            std::cout << "Module path provided may be wrong. Module not found.\n\n";
+
+        // Py_DECREF(pArgs);
+        // Py_DECREF(pFunc);
+
+        parent->relativeRank[p_val_score] = std::make_pair(child->store_id, t_statistic_score);
+    }
+
+    //###################### BENCHMARKING CODE ##############################
+    gettimeofday(&tempo3, NULL);
+
+    elapsed_seconds1 = tempo3.tv_sec - tempo2.tv_sec;
+    elapsed_useconds1 = tempo3.tv_usec - tempo2.tv_usec;
+    elapsed_utime1 = (elapsed_seconds1) * 1000000 + elapsed_useconds1;
+    if(start_time_computation)
+    {
+        rank_data_set_t_test_time += elapsed_utime1;
+    }
+    //###################### BENCHMARKING CODE ##############################
+}
+
+size_t dataDb::rank_runt_time_data_set(dataDb *parent)
+{
+    //###################### BENCHMARKING CODE ##############################
+    long elapsed_seconds;
+    long elapsed_useconds;
+    long elapsed_utime;
+
+    struct timeval tempo, tempo1;
+    gettimeofday(&tempo, NULL);
+    
+    //###################### BENCHMARKING CODE ##############################
+    dataDb *bestMatch;
+    float eigenDiff, leastDiff;
+    leastDiff = std::numeric_limits<float>::max();
+    eigenDiff = 0;
+    // return dataStoreHash.begin()->second->store_id;
+    for (std::vector<dataDb *>::iterator childIter = dataStore.begin(); childIter != dataStore.end(); ++childIter)
+    {
+        for (int i = 0; i < parent->pca.eigenvectors.rows; ++i)
+        {
+            eigenDiff = 0;
+            for (int j = 0; j < parent->pca.eigenvectors.cols; ++j)
+            {
+                eigenDiff += pow(parent->pca.eigenvectors.at<float>(i, j), 2) - pow((*childIter)->pca.eigenvectors.at<float>(i, j),2);
+            }
+            // cout << "Child Store Id: " << (*childIter)->store_id;
+            // cout << "\nEigen Diff: " << eigenDiff << endl;
+            // cout << "\nLeast Diff: " << leastDiff << endl << endl << endl << endl << endl << endl;
+            if(eigenDiff < leastDiff)
+            {
+                leastDiff = eigenDiff;
+                bestMatch = (*childIter);
+            }
+        }
+        
+    }
+
+    // return bestMatch->store_id;
+    dataDb::rank_data_set(parent, dataStoreHash[bestMatch->store_id]);
+    std::map<float, std::pair<size_t, float>, std::greater<float> >::iterator topK;
+    int ctr = 0;
+
+    for (topK = bestMatch->relativeRank.begin(); topK != bestMatch->relativeRank.end() && ctr < 3; ++topK, ++ctr)
+    {
+        size_t store_id = std::get<0>((*topK).second);
+        dataDb::rank_data_set(parent, dataStoreHash[store_id]);
+    }
+
+    //###################### BENCHMARKING CODE ##############################
+    gettimeofday(&tempo1, NULL);
+
+    elapsed_seconds = tempo1.tv_sec - tempo.tv_sec;
+    elapsed_useconds = tempo1.tv_usec - tempo.tv_usec;
+    elapsed_utime = (elapsed_seconds) * 1000000 + elapsed_useconds;
+    if(start_time_computation)
+    {
+        rank_runt_time_data_set_time += elapsed_utime;
+    }
+    //###################### BENCHMARKING CODE ##############################
+    return std::get<0>(parent->relativeRank.begin()->second);
+    // return 0;
+}
+
+
+cv::Mat dataDb::compute_centroid(cv::Mat data, cv::Mat *labels, double *compactness, int cluster_count = 40)
+{
+    cv::Mat centers;
+    cv::kmeans(data, cluster_count, *labels, cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 20, .01), 3, cv::KMEANS_PP_CENTERS, centers);
+
+    return centers;
+}
+
+std::vector<dataDb *> trainDataSet(const string dir, int cluster_count = 40)
+{
+    std::vector<string> v;
+
+    dataDb::getFilesInDirectory(&v, dir);
+
+    // Re-Initialise the test data store vector on every training run.
+    dataStore.clear();
+    dataStoreHash.clear();
+
+
+    for (int i = 0; i < (int)v.size(); ++i)
+    {
+        dataDb *tmpDataStore = new dataDb();
+        dataDb::readDataStore(dir + "/" + v[i], tmpDataStore);
+        dataStore.push_back(tmpDataStore);
+    }
+
+    for (std::vector<dataDb *>::iterator iter = dataStore.begin(); iter != dataStore.end(); ++iter)
+    {
+        dataStoreHash[(*iter)->store_id] = (*iter);
+        (*iter)->dimBinPoints = dataDb::prepare_pca_data((*iter)->data, (*iter)->histograms);
+        (*iter)->centroids = dataDb::compute_centroid((*iter)->data, &(*iter)->labels, &(*iter)->compactness, cluster_count);
+        if((*iter)->data.cols > PCA_MIN_DIM)
+        {
+            (*iter)->pca = dataDb::PCA_dim_reduction((*iter)->dimBinPoints);
+
+#if DEBUG
+            cout << (*iter)->data << endl<< endl;
+            cv::Mat projMat = (*iter)->pca.project((*(iter+1))->data);
+            cout << projMat << endl<< endl << endl;
+            cout << (*iter)->pca.backProject(projMat) << "\n\n\n";
+#endif
+
+            (*iter)->has_pca = 1;
+        }
+    }
+
+    for (std::vector<dataDb *>::iterator parIter = dataStore.begin(); parIter != dataStore.end(); ++parIter)
+    {
+        for (std::vector<dataDb *>::iterator childIter = dataStore.begin(); childIter != dataStore.end(); ++childIter)
+        {
+            if(parIter != childIter)
+            {
+                dataDb::rank_data_set(*parIter, *childIter);
+            }
+
+
+        }
+    }
+    
+    return dataStore;
+}
+
+
+#endif

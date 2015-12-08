@@ -1,0 +1,262 @@
+Large Data:
+
+Intiailizing training of history data sets: 	(This may take a while. Please be patient)
+
+
+
+ The end of training run is called
+
+
+Training of history data sets completed. 
+9
+1
+
+
+############################################################################################
+now running kmeans with Random Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 9
+compactness : 33536.4
+CPU Run Time in k means with no history reuse run : 323646
+
+K-means++ for data set no : 1
+compactness : 87984.3
+CPU Run Time in k means with no history reuse run : 197936
+
+
+
+############################################################################################
+now running kmeans with kmeans ++ Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 9
+compactness : 4104.17
+CPU Run Time in k means with no history reuse run : 80420
+
+K-means++ for data set no : 1
+compactness : 9597.4
+CPU Run Time in k means with no history reuse run : 105739
+
+
+
+############################################################################################
+now running kmeans with custom labels :
+############################################################################################
+
+
+History reuse K-means for data set no : 9
+
+Best match id : 15
+
+Store Id : 0
+compactness : 4378.15
+CPU Run Time in k means with history reuse run : 62128
+
+History reuse K-means for data set no : 1
+
+Best match id : 7
+
+Store Id : 10
+compactness : 12299.6
+CPU Run Time in k means with history reuse run : 78893
+
+Reduce Data Points Time : 0
+Prepare PCA Data Time : 0
+Rank Dataset PCA Projection Time : 0
+Rank data set T-Test Computation Time : 0
+Total computation over head : 48040
+
+
+
+#####################################################################################################################################################################
+
+
+Intiailizing training of history data sets: 	(This may take a while. Please be patient)
+
+
+
+ The end of training run is called
+
+
+Training of history data sets completed. 
+2
+11
+
+
+############################################################################################
+now running kmeans with Random Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 2
+compactness : 10611.5
+CPU Run Time in k means with no history reuse run : 121530
+
+K-means++ for data set no : 11
+compactness : 74262.3
+CPU Run Time in k means with no history reuse run : 186622
+
+
+
+############################################################################################
+now running kmeans with kmeans ++ Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 2
+compactness : 1869.63
+CPU Run Time in k means with no history reuse run : 123237
+
+K-means++ for data set no : 11
+compactness : 6146.39
+CPU Run Time in k means with no history reuse run : 89254
+
+
+
+############################################################################################
+now running kmeans with custom labels :
+############################################################################################
+
+
+History reuse K-means for data set no : 2
+
+Best match id : 13
+
+Store Id : 10
+compactness : 3774.02
+CPU Run Time in k means with history reuse run : 106186
+
+History reuse K-means for data set no : 11
+
+Best match id : 10
+
+Store Id : 10
+compactness : 11386
+CPU Run Time in k means with history reuse run : 68156
+
+Reduce Data Points Time : 0
+Prepare PCA Data Time : 0
+Rank Dataset PCA Projection Time : 0
+Rank data set T-Test Computation Time : 0
+Total computation over head : 49425
+
+
+
+
+Small DATA:
+
+
+Training of history data sets completed. 
+28
+13
+
+
+############################################################################################
+now running kmeans with Random Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 28
+compactness : 276.737
+CPU Run Time in k means with no history reuse run : 6681
+
+K-means++ for data set no : 13
+compactness : 277.433
+CPU Run Time in k means with no history reuse run : 5569
+
+
+
+############################################################################################
+now running kmeans with kmeans ++ Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 28
+compactness : 121.983
+CPU Run Time in k means with no history reuse run : 35724
+
+K-means++ for data set no : 13
+compactness : 126.855
+CPU Run Time in k means with no history reuse run : 20398
+
+
+
+############################################################################################
+now running kmeans with custom labels :
+############################################################################################
+
+
+History reuse K-means for data set no : 28
+
+Best match id : 16
+
+Store Id : 5
+compactness : 250.43
+CPU Run Time in k means with history reuse run : 17136
+
+History reuse K-means for data set no : 13
+
+Best match id : 22
+
+Store Id : 9
+compactness : 259.45
+CPU Run Time in k means with history reuse run : 16949
+
+Rank data set T-Test Computation Time : 0
+Total computation over head : 24897
+
+
+############################################################################################################################################################
+
+30
+18
+
+
+############################################################################################
+now running kmeans with Random Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 30
+compactness : 178.683
+CPU Run Time in k means with no history reuse run : 5079
+
+K-means++ for data set no : 18
+compactness : 260.678
+CPU Run Time in k means with no history reuse run : 10664
+
+
+
+############################################################################################
+now running kmeans with kmeans ++ Intiailizing :
+############################################################################################
+
+K-means++ for data set no : 30
+compactness : 97.7235
+CPU Run Time in k means with no history reuse run : 27123
+
+K-means++ for data set no : 18
+compactness : 124.894
+CPU Run Time in k means with no history reuse run : 30556
+
+
+
+############################################################################################
+now running kmeans with custom labels :
+############################################################################################
+
+
+History reuse K-means for data set no : 30
+
+Best match id : 31
+
+Store Id : 8
+compactness : 261.57
+CPU Run Time in k means with history reuse run : 16935
+
+History reuse K-means for data set no : 18
+
+Best match id : 31
+
+Store Id : 24
+compactness : 294.713
+CPU Run Time in k means with history reuse run : 19862
+
+Rank data set T-Test Computation Time : 0
+Total computation over head : 25850
