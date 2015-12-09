@@ -1,0 +1,142 @@
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	1
+compactness : 2.21782
+compactness : 2.55549
+compactness : 2.55725
+compactness : 3.4272
+
+CPU Run Time in k means with no history reuse run : 2337
+suttu-pro:src Shanil$ ./intiKmeans
+
+
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	2
+Intiailizing training of history data sets:
+Training of history data sets completed.
+compactness : 1.4998
+compactness : 1.87303
+compactness : 1.91693
+compactness : 2.54204
+
+CPU Run Time in k means with history reuse run : 6432
+suttu-pro:src Shanil$ ./intiKmeans
+
+
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	3
+compactness : 312.097
+compactness : 307.781
+compactness : 293.06
+compactness : 372.024
+
+CPU Run Time in k means with no history reuse run : 2922598
+suttu-pro:src Shanil$ ./intiKmeans
+
+
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	4
+Intiailizing training of history data sets:
+Training of history data sets completed.
+compactness : 557.732
+compactness : 532.746
+compactness : 515.978
+compactness : 1315.54
+
+CPU Run Time in k means with history reuse run : 482393
+suttu-pro:src Shanil$ ./intiKmeans
+
+
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	5
+compactness : 8840.49
+compactness : 8732.71
+compactness : 8647.88
+compactness : 11447.5
+
+CPU Run Time in k means with no history reuse run : 6386345
+suttu-pro:src Shanil$ ./intiKmeans
+
+
+##########################################################################################################
+
+Please use one of the following choices:
+	Enter 1 to run kmeans++ algorithm on untrained data (3D-Small):
+	Enter 2 to run kmeans algorithm with history reuse on data (3D-Small):
+	Enter 3 to run kmeans++ algorithm on untrained data (3D-Large):
+	Enter 4 to run kmeans algorithm with history reuse on data data (3D-Large):
+	Enter 5 to run kmeans++ algorithm on untrained data (10D-Large):
+	Enter 6 to run kmeans algorithm with history reuse on data(10D-Large):
+
+
+##########################################################################################################
+
+Please enter your choice: 	6
+Intiailizing training of history data sets:
+Training of history data sets completed.
+Now running kmeans with custom labels :
+compactness : 10644.8
+compactness : 10239.4
+compactness : 12118.4
+compactness : 15764.3
+
+CPU Run Time in k means with history reuse run : 3815759
