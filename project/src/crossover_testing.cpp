@@ -238,8 +238,8 @@ void run_kmeans_no_lables_3d_large()
 void run_kmeans_custom_lables_3d_large()
 {
     std::vector<dataDb *> dataStore_test;
-    const string dir = "../dataset_two_gas_sources_/dataset_twosources_downsampled";
-    const string test_dir = "../dataset_two_gas_sources_/dataset_twosources_downsampled";
+    const string dir = "../3D_large_data";
+    const string test_dir = "../3D_large_data";
 
     cout << "Intiailizing training of history data sets: \t(This may take a while. Please be patient)\n";
     trainDataSet(dir, 80);
@@ -278,16 +278,36 @@ void run_kmeans_custom_lables_3d_large()
 void run_kmeans_no_lables_10d_large()
 {
     std::vector<dataDb *> dataStore_test;
+
     const string dir = "../10D_large_data";
-    const string test_dir = "../10D_Large_Test_Set";
+    const string test_dir = "../10D_large_data";
+    
+    cout << "Intiailizing training of history data sets: \t(This may take a while. Please be patient)\n";
+    trainDataSet(dir, 80);
+    cout << "Training of history data sets completed. \n";
 
     int test_set_count = floor(0.1 * (int)dataStore.size());
     int total_sets = (int)dataStore.size();
     
     dataStore_test = read_test_dataStore(test_dir, test_set_count, total_sets);
 
-    cout << "Running k-means++ algorithm: \n\n";
+    // cout << "Now running kmeans with custom labels with K-Index = 40: \n\n";
+    // run_kmeans_custom_lables(dataStore_test);
+    cout << "\n\n############################################################################################\n";
+    cout << "now running kmeans with Random Intiailizing :";
+    cout << "\n############################################################################################\n\n";
+    run_kmeans_random_no_lables(dataStore_test, 80);
+    
+    cout << "\n\n############################################################################################\n";
+    cout << "now running kmeans with kmeans ++ Intiailizing :";
+    cout << "\n############################################################################################\n\n";
     run_kmeans_no_lables(dataStore_test, 80);
+    
+    cout << "\n\n############################################################################################\n";
+    cout << "now running kmeans with custom labels :";
+    cout << "\n############################################################################################\n\n";
+    start_time_computation = 1;
+    run_kmeans_custom_lables(dataStore_test, 80);
 }
 
 void run_kmeans_custom_lables_10d_large()
@@ -341,11 +361,9 @@ void run_kmeans_custom_lables_10d_large()
     cout << "\nRank Dataset PCA Projection Time : " << rank_data_set_pca_time;
     cout << "\nRank data set T-Test Computation Time : " << rank_data_set_t_test_time;
     cout << "\nTotal computation over head : " << rank_runt_time_data_set_time + pca_dim_reduction_time << endl;
-
-    
-        rank_data_set_t_test_time = 0;
-        rank_runt_time_data_set_time = 0;
-        pca_dim_reduction_time = 0;
+    rank_data_set_t_test_time = 0;
+    rank_runt_time_data_set_time = 0;
+    pca_dim_reduction_time = 0;
 }
 
 
@@ -353,27 +371,16 @@ int main(int argc, char const *argv[])
 {
     cout << "\n\n##########################################################################################################\n\n";
     cout << "Please use one of the following choices: \n";
-    // cout << "\tEnter 1 to run kmeans++ algorithm on untrained data (3D-Small): \n";
-    // cout << "\tEnter 2 to run kmeans algorithm with history reuse on data (3D-Small): \n";
-    cout << "\tEnter 3 to run kmeans++ algorithm on untrained data (3D-Large): \n";
-    cout << "\tEnter 4 to run kmeans algorithm with history reuse on data data (3D-Large): \n";
-    cout << "\tEnter 5 to run kmeans++ algorithm on untrained data (10D-Large): \n";
-    cout << "\tEnter 6 to run kmeans algorithm with history reuse on data(10D-Large): \n";
+    cout << "\tEnter 1 to run kmeans algorithms on 3D-Large Data: \n";
+    cout << "\tEnter 2 to run kmeans algorithms on 10D-Large Data: \n";
     cout << "\n\n##########################################################################################################\n\n";
     int choice = 0;
     cout << "Please enter your choice: \t";
     cin >>  choice;
-    // if(choice == 1)
-    //     run_kmeans_no_lables_3d_small();
-    // else if(choice == 2)
-    //     run_kmeans_custom_lables_3d_small();
-    if(choice == 3)
-        run_kmeans_no_lables_3d_large();
-    else if(choice == 4)
+
+    if(choice == 1)
         run_kmeans_custom_lables_3d_large();
-    else if(choice == 5)
-        run_kmeans_no_lables_10d_large();
-    else if(choice == 6)
+    else if(choice == 2)
         run_kmeans_custom_lables_10d_large();
     else{
         cout << "Wrong choice entered. Program exiting!!";

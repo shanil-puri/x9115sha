@@ -32,42 +32,38 @@ No additional environment variables are needed for this.
 Instructions on how to run the program.
 =====
 1) Extract folder to working directory.
-2) cd ~/final_proj/src: Open file: prepareHistory.cpp and change path of variable “const string dir” to directory path to ~/final_proj/input_data.
-3) Use the following command to compile the source code:
+2) Use the following command to compile the source code:
 	
 	-> OS-X Compilation: g++ -o crossover_testing crossover_testing.cpp $(pkg-config opencv --cflags --libs);
 	
 	-> Python Compilation:  g++ -o  crossover_testing crossover_testing.cpp -I/usr/include/python2.7  -DNDEBUG -g -fwrapv -O3 -Wall -lpython2.7 -L/usr/lib/python2.7/config-x86_64-linux-gnu/ -std=c++11  $(pkg-config opencv --cflags --libs);
 
 	-> Should compile without any erros or warnings.
-4) ./initKmeans
-5) Now you shoudl see it run on and temincal will be printed to terminal.
+3) ./crossover_testing: Select between options shown on screen.
+4) Now you shoudl see it run on terminal  and output will be printed to terminal.
 
 Instructions on how to interpret the results.
 =====
 1. Each "#########" sepreated value set represents a parent data set with how the other history sets rank with respect to that dataset. It also will display the relative probability of similarity with that data-set (Summation of all the probabilities of the individual dimension) and the also show the t-statistic also as a summation for all dimensions.
 2. Run Time for training data-set has been displayed at end.
 
-Sample input and output files (if applicable).
-=====
-1. Sample input files containing data sets are in the ~/final_proj/input_data folder.
-2. Sample input files contain 10 pts each represented by 3 dimensions.
-3. Sample output is printed on terminal.
-
 Limitations:
 ======
 1. Only in memory implementation has been done, thus input size will be dependent on the memory available.
-2. Only hostory training implementation has been done. Adding implementation with K-means algorithms has not been done yet.
 
 Code Structure:
 ======
 1. 3 header files have been made:
 	a. datastore.hpp: Contains all the computations that are carried out on the data-set including metric calculations and PCA and bin based reductions.
 	b. utilities.hpp: Contains utilitu functions for custom sorter for map etc.
-2. One test file has been provided which reads the input files in ~/final_proj/input_data and prepares the history set.
-3. tTestScript.py: Python script to run pair-wise t-test on comparable data-set dimensions has been implemented. This file is invoked by the "rank_data_set" function provided in the datastore.hpp file.
+	c. t_test.hpp: Contains implementation of Welch's Test.
+2. crossover_testing.cpp: Main file. Contains code to run and compare kmeans, kmeans++ and Kmeans with History Reuse performances.
 
-References to any software you may have used (if applicable).
-=====
-OpenCV
-Python T-Test library.
+Notes:
+======
+1. Report can be found [here](https://github.com/shanil-puri/x9115sha/blob/master/project/Project_Report.pdf)
+2. Paper in ICML format can be found [here](https://github.com/shanil-puri/x9115sha/blob/master/project/history_reuse-kmeans.pdf). Please note this paper is a work in progress and has not been completed.
+3. All experiments have been perfomed on the following system configurations:
+	a. RAM: 8 GB 1600 MHz DDR3
+	b. Processor: 2.6 GHz Intel Core i5
+	c. OS: OS X El Capitan.
