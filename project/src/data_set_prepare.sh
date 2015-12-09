@@ -1,13 +1,13 @@
 #!/bin/sh
 t="_t"
-#for f in /Users/Shanil/final_proj/dataset_two_gas_sources_/dataset_twosources_downsampled/*
-#	do 
-#		k=$f$t
-#		echo "Processing $k file.." 
-#		sed 's/,/ /g' "$f" > "$k"
-#		cp "$k"  "$f"
-#		rm "$k"
-#done
+for f in /Users/Shanil/final_proj/dataset_two_gas_sources_/dataset_twosources_downsampled/*
+	do 
+		k=$f$t
+		echo "Processing $k file.." 
+		sed 's/,/ /g' "$f" > "$k"
+		cp "$k"  "$f"
+		rm "$k"
+done
 i=0
 for f in /Users/Shanil/final_proj/dataset_two_gas_sources_/dataset_twosources_downsampled/*
 	do
